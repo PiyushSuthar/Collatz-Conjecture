@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3N+1 - Simple Math Problem</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
+    />
+  </head>
+  <body>
+    <section>
+      <h1>3N+1 - Simple Math Problem</h1>
+      <p>
+        For more context about what's this, watch this video.
+        <a href="https://www.youtube.com/watch?v=094y1Z2wpJg" target="_blank">
+          The Simplest Math Problem No One Can Solve
+        </a>
+        by Veritasium.
+      </p>
+    </section>
+    <form id="form">
+      <label>Start Point</label>
+      <input type="text" name="startPoint" placeholder="27" min="1" />
+      <button type="submit">submit</button>
+    </form>
+
+    <details>
+      <summary>Results:-</summary>
+      <div id="results">
+        <table>
+          <tr>
+            <th scope="row">Total Steps Took</th>
+            <td id="results-total-steps">0</td>
+          </tr>
+          <tr>
+            <th scope="row">Largest Value</th>
+            <td id="results-largest-value">0</td>
+          </tr>
+          <tr>
+            <th scope="row">All Values</th>
+            <td id="results-all-values">0</td>
+          </tr>
+        </table>
+      </div>
+    </details>
+    <h3>Chart</h3>
+    <canvas id="myChart"></canvas>
+
+    <footer>
+      Made with love by
+      <a target="_blank" href="https://twitter.com/piyushsthr">Piyush Suthar</a
+      >. I ❤
+      <a target="_blank" href="https://github.com/Collatz-Conjecture"
+        >Open Source</a
+      >
+      &amp; JavaScript.
+    </footer>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js"
+      integrity="sha512-asxKqQghC1oBShyhiBwA+YgotaSYKxGP1rcSYTDrB0U6DxwlJjU59B67U8+5/++uFjcuVM8Hh5cokLjZlhm3Vg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <!-- Importing functions -->
+    <script src="./index.js"></script>
+    <script>
+      // Getting canvas element
+      var ctx = document.getElementById("myChart").getContext("2d");
+
+      function setResultsToDiv(results = [0]) {
+        // Getting the max value acheived
+        let maxValue = Math.max(...results);
+
+        document.getElementById("results-total-steps").innerText =
+          results.length;
+        document.getElementById("results-largest-value").innerText = maxValue;
+        document.getElementById("results-all-values").innerText =
+          results.join(", ");
+      }
+
+      // Getting initial data
+      const data = getData(27);
+      setResultsToDiv(data);
+
+      // Chart code, it works so please don't touch it :D
+      var myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          // Adding labels
+          labels: Array(data.length)
+            .fill(0)
+            .map((_, i) => i),
+          // Initial Dataset
+          datasets: [
+            {
+              label: "Data",
+              data: data,
+
+              borderColor: [
+                "rgba(255, 99, 132, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(153, 102, 255, 1)",
+                "rgba(255, 159, 64, 1)",
+              ],
+              borderWidth: 0.5,
+            },
+          ],
+        },
+        // These works smh, I dont know why.
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              suggestedMax: 1,
+            },
+          },
+          // For responsiveness
+          responsive: true,
+        },
+      });
+
+      // Adding event listener
+      document.getElementById("form").addEventListener("submit", (e) => {
+        // Preventing default behavior
+        e.preventDefault();
+
+        // Getting the value from the input
+        let value = document.getElementById("form").startPoint.value;
+
+        // Parsing the value
+        const startPoint = parseInt(value ? value : 27);
+
+        // Getting the data
+        const data = getData(startPoint);
+
+        // Set result to div
+        setResultsToDiv(data);
+
+        // Updating the chart
+        myChart.data.labels = Array(data.length)
+          .fill(0)
+          .map((_, i) => i);
+
+        myChart.data.datasets.forEach((dataset) => {
+          dataset.data = data;
+        });
+
+        myChart.update();
+      });
+    </script>
+  </body>
+</html>
